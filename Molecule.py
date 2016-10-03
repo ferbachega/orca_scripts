@@ -24,7 +24,10 @@
 from pprint import pprint
 import subprocess
 import os
-ORCA='/home/fernando/programs/orca_3_0_3_linux_x86-64'
+
+ORCA = os.environ.get('ORCA')
+
+#ORCA='/home/fernando/programs/orca_3_0_3_linux_x86-64'
 
 class Atom:
     """ Class doc """
@@ -96,14 +99,14 @@ class MolecularSystem:
                                     'PAL'        : True   ,
                                     'NPAL'       : 1      ,
                                     'PrintBasis' : False  ,
-                                    'bases'      : '3-21G', 
+                                    'bases'      : '6-31G', 
                                     'CHELPG'     : True   ,
                                     'method'     : 'HF'   ,
                                     }
         else:
             self.ORCA_parameters = ORCA_parameters
         #--------------------------------------------------------------
-
+        self.bonds = []
 
 
     
@@ -144,14 +147,7 @@ class MolecularSystem:
                                                                                        atom.MULLIKEN_charge, 
                                                                                        atom.CHELPG_charge, 
                                                                                        atom.LOEWDIN_charge)
-
-
-
-   
     
-    def setup_orca_calculations (self, method = 'HF'):
-        """ Function doc """
-        
     
     
     def Import_MOL2FileToSystem (self, filein, log = True):
@@ -175,12 +171,112 @@ class MolecularSystem:
                                float(line2[4])]
                 self.atoms.append(atom)
                 total_charge += float(atom.charge)
-                
+            if len(line2) == 4:
+                try:
+                    bond = [int(line2[0]),int(line2[1]),int(line2[2]),int(line2[3])]
+                    self.bonds.append(bond)
+                except:
+                    pass
                 #print line2
         if log:
             self.print_status()
             #print 'number of atoms:', len(self.atoms)
             #print 'total charge   :', total_charge
+
+    def Export_MOL2File(self                    ,
+                        fileout = 'fileout.mol2',
+                        charge  = 'CHELPG'      ,):
+        """ Function doc 
+
+
+        @<TRIPOS>MOLECULE
+        *****
+         5 4 0 0 0
+        SMALL
+        GASTEIGER
+
+        @<TRIPOS>ATOM
+              1 C          -3.2580    2.0070    0.0000 C.3     1  LIG1       -0.0776
+              2 H          -2.1880    2.0070    0.0000 H       1  LIG1        0.0194
+              3 H          -3.6147    1.3042    0.7237 H       1  LIG1        0.0194
+              4 H          -3.6147    1.7317   -0.9705 H       1  LIG1        0.0194
+              5 H          -3.6147    2.9852    0.2468 H       1  LIG1        0.0194
+        @<TRIPOS>BOND
+             1     1     2    1
+             2     1     3    1
+             3     1     4    1
+             4     1     5    1
+        
+        
+        """
+        
+         
+        
+        text =  '@<TRIPOS>MOLECULE\n'
+        text += '*****\n'
+        text += '%3i %3i 0 0 0 \n'%(len(self.atoms), len(self.bonds))
+        text += 'SMALL                                                                       \n'
+        text += '%s                                                                    \n' %(charge)
+        text += '                                                                            \n'
+        text += '@<TRIPOS>ATOM                                                               \n'
+        
+        for atom in self.atoms:
+            
+            if charge == 'CHELPG':
+                atom_charge = atom.CHELPG_charge
+            if charge == 'MULLIKEN':
+                atom_charge = atom.MULLIKEN_charge
+            if charge == 'LOEWDIN':
+                atom_charge = atom.LOEWDIN_charge 
+
+            #print atom.coordinates
+            text += '%7i %3s       %7.4f %7.4f %7.4f %3s  1  LIG  %8.4f \n' %(int(atom.index), 
+                                                                              str(atom.name), 
+                                                                              float(atom.coords[0]),
+                                                                              float(atom.coords[1]),
+                                                                              float(atom.coords[2]),
+                                                                              str(atom._type), 
+                                                                              float(atom_charge))
+        
+        
+        
+        
+        
+        #text += '      1 C          -3.2580    2.0070    0.0000 C.3     1  LIG1       -0.0776'
+        #print text
+        
+        text += '@<TRIPOS>BOND                                                              \n'
+        for bond in self.bonds:
+            text += '%6s %6s %6s %6s \n' %(bond[0],bond[1],bond[2],bond[3])
+        
+        
+        fileout = open(fileout, 'w')
+        fileout.write(text)
+        print text
+        #for atom in self.atoms:
+        #    print atom.index          
+        #    print atom.symbol         
+        #    print atom.name           
+        #    print atom._type          
+        #    print atom.MULLIKEN_charge
+        #    print atom.CHELPG_charge  
+        #    print atom.LOEWDIN_charge 
+        #    print atom.coordinates    
+        #    print 'bonds:', self.bonds
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     def export_ORCA_inputfile (self                , 
@@ -220,7 +316,8 @@ class MolecularSystem:
         #text += '   tprint[p_mos] 1                                                \n'
         #text += 'end #output                                                       \n'
         
-        text += '* xyz 0   1                                                       \n'
+        text += '* xyz %3i %3i  \n' %( self.charge , self.multiplicity  )
+        
         for atom in self.atoms:
             text += '%s  %4.6f %4.6f %4.6f \n' %(atom.name, atom.coords[0], atom.coords[1], atom.coords[2] )
         text += '*                                                                 \n'
@@ -313,65 +410,12 @@ class MolecularSystem:
         self.ParseORCALogFile(fileout)
 
 
-    '''
-    def ExportORCAInputFile (self, 
-                             fileout    = None   , 
-                             _type      = 'HF'   ,
-                             base       = '3-21G',
-                             PrintBasis = False  ,
-                             CHELPG     = True   ,
-                            ):
-        """ Function doc """
-        text  = ''
-        text += '# ================================================================\n'
-        text += '# Orca input file made in ORCA SCRIPT                             \n'
-        text += '# ================================================================\n'
-        
-        text += '! ' + _type + '\n'
-        
-        if PrintBasis:
-            PrintBasis = 'PrintBasis'
-        else:
-            PrintBasis = ''
-
-        text += '! ' + PrintBasis + ' ' +  base
-        
-        
-        
-        if CHELPG:
-            text += ' CHELPG \n'
-        else:
-            text += ' \n'
-       
-       
-        #text += '%output                                                           \n'
-        #text += '   tprint[p_mos] 1                                                \n'
-        #text += 'end #output                                                       \n'
-        
-        text += '* xyz 0   1                                                       \n'
-        for atom in self.atoms:
-            text += '%s  %4.6f %4.6f %4.6f \n' %(atom.name, atom.coords[0], atom.coords[1], atom.coords[2] )
-        text += '*                                                                 \n'
-        
-        fileout = open(fileout, 'w')
-        fileout.write(text)
-        
-        #text += '%geom Constraints                                                 \n'
-        #text += '{C 0 C}                                                           \n'
-        #text += '{C 1 C}                                                           \n'
-        #text += '{C 2 C}                                                           \n'
-        #text += '{C 3 C}                                                           \n'
-        #text += 'end #Constraints                                                  \n'
-        #text += 'invertConstraints true                                            \n'
-        #text += 'end #geom    
-        '''
-
 molecules = [
-            '/home/fernando/programs/orca_scripts/examples/butane.mol2'     ,
-            '/home/fernando/programs/orca_scripts/examples/etane.mol2'      ,
-            '/home/fernando/programs/orca_scripts/examples/etanol.mol2'     ,
-            '/home/fernando/programs/orca_scripts/examples/metane.mol2'     ,
-            '/home/fernando/programs/orca_scripts/examples/metylamine.mol2' ,
+            'examples/butane.mol2'     ,
+            'examples/etane.mol2'      ,
+            'examples/etanol.mol2'     ,
+            'examples/metane.mol2'     ,
+            'examples/metylamine.mol2' ,
             ]
 
 # simple test
@@ -391,6 +435,7 @@ for molecule in molecules:
     mol.basename = basename
     mol.Import_MOL2FileToSystem (filein = molecule, log = False)
     mol.run_ORCA()
+    mol.Export_MOL2File(fileout = molecule[:-4]+'new_charge.mol2')
     mol.print_status(partial_charges = True)
 
 
