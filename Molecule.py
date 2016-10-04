@@ -99,7 +99,7 @@ class MolecularSystem:
                                     'PAL'        : True   ,
                                     'NPAL'       : 1      ,
                                     'PrintBasis' : False  ,
-                                    'bases'      : '6-31G', 
+                                    'bases'      : '3-21G', 
                                     'CHELPG'     : True   ,
                                     'method'     : 'HF'   ,
                                     }
@@ -265,22 +265,9 @@ class MolecularSystem:
         #    print 'bonds:', self.bonds
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def export_ORCA_inputfile (self                , 
-                               fileout    = None   , 
+                               fileout    = None   ,
+                               _type      = 'energy' 
                               ):
         """ Function doc """
         
@@ -291,10 +278,13 @@ class MolecularSystem:
         text += '# ----------------------------------------------------------------\n'
         
         
+        if _type == 'energy':
+            text += '! ' + self.ORCA_parameters['method'] + '\n'
         
-        text += '! ' + self.ORCA_parameters['method'] + '\n'
+        if _type == 'opt':
+            text += '! opt ' + self.ORCA_parameters['method'] + '\n'
         
-        
+
         
         
         
@@ -374,36 +364,39 @@ class MolecularSystem:
             for line in range(CHELPG_initial_index, CHELPG_final_index):
                 line2 = text[line].split()
                 if len(line2) == 4:
-                    index  = int(line2[0]) -1
+                    index  = int(line2[0]) 
                     self.atoms[index].CHELPG_charge = float(line2[3])
                     #print self.atoms[index].name , self.atoms[index].CHELPG_charge
                 
         for line in range(MULLIKEN_initial_index, MULLIKEN_final_index):
             line2 = text[line].split()
             if len(line2) == 4:
-                index  = int(line2[0]) -1
-                self.atoms[index].MULLIKEN_charge = float(line2[3])
-                #print self.atoms[index].name , self.atoms[index].MULLIKEN_charge
-                
+                try:
+                    index  = int(line2[0]) 
+                    self.atoms[index].MULLIKEN_charge = float(line2[3])
+                    #print self.atoms[index].name , self.atoms[index].MULLIKEN_charge
+                except:
+                    print index, line2
+                    
         for line in range(LOEWDIN_initial_index, LOEWDIN_final_index):
             line2 = text[line].split()
             if len(line2) == 4:
-                index  = int(line2[0]) -1
+                index  = int(line2[0]) 
                 self.atoms[index].LOEWDIN_charge = float(line2[3])
                 #print self.atoms[index].name , self.atoms[index].LOEWDIN_charge
 
 
-    def run_ORCA(self, filein = None, fileout = None):
+    def run_ORCA(self, filein = None, fileout = None, _type = 'energy'):
         """ Function doc """
         #subprocess.call('orca', filein, '>', fileout)
-        
-        
+
         if filein == None:
             filein = self.basename+'.inp'
         if fileout == None:
             fileout = self.basename+'.out'
         
-        self.export_ORCA_inputfile (fileout = filein)
+        self.export_ORCA_inputfile (fileout = filein,
+                                    _type   = _type)
         
         os.system(ORCA + '/orca '+filein+ ' > ' + fileout)
         
@@ -434,10 +427,19 @@ for molecule in molecules:
     mol = MolecularSystem()
     mol.basename = basename
     mol.Import_MOL2FileToSystem (filein = molecule, log = False)
-    mol.run_ORCA()
-    mol.Export_MOL2File(fileout = molecule[:-4]+'new_charge.mol2')
-    mol.print_status(partial_charges = True)
-
+    
+    mol.run_ORCA(_type = 'energy')
+    
+    mol.Export_MOL2File(fileout = molecule[:-4]+'MULLIKEN.mol2', charge ='MULLIKEN')
+    mol.Export_MOL2File(fileout = molecule[:-4]+'CHELPG.mol2'  , charge ='CHELPG'  )
+    mol.Export_MOL2File(fileout = molecule[:-4]+'LOEWDIN.mol2' , charge ='LOEWDIN' )
+    #mol.print_status(partial_charges = True)
+    
+    
+    mol.run_ORCA(_type = 'opt')
+    mol.Export_MOL2File(fileout = molecule[:-4]+'MULLIKEN_opt.mol2', charge ='MULLIKEN')
+    mol.Export_MOL2File(fileout = molecule[:-4]+'CHELPG_opt.mol2'  , charge ='CHELPG'  )
+    mol.Export_MOL2File(fileout = molecule[:-4]+'LOEWDIN_opt.mol2' , charge ='LOEWDIN' )
 
 
 
