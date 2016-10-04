@@ -149,39 +149,117 @@ class MolecularSystem:
                                                                                        atom.LOEWDIN_charge)
     
     
+    def get_symbol_from_atom_name (self, name = None):
+        """ Function doc """
+        
+        Symbol = name[0]
+        
+        for char in name[1:]:
+            
+            try:
+                char = int(char)
+
+            except:
+                if char == char.capitalize():
+                    pass
+                else:
+                    Symbol += char
+            
+        return Symbol
+    
     
     def Import_MOL2FileToSystem (self, filein, log = True):
         """ Function doc """
         text = open(filein, 'r')
-        
+        text = text.readlines()
         #self.chain = Chain()
         total_charge = 0
         
+        atoms_initial_index = None
+        atoms_final_index   = None
+        bonds_final_index   = text.index(text[-1])
+        
+        
         for line in text:
-            line2 = line.split()
+            
+            #line2 = line.split()
+            
+            if '@<TRIPOS>ATOM' in line:
+                atoms_initial_index = text.index(line)
+            
+            if '@<TRIPOS>BOND' in line:
+                atoms_final_index   = text.index(line)
+            
+            if '@<TRIPOS>SUBSTRUCTURE' in line:
+                bonds_final_index   = text.index(line)
+
+        
+        
+        for index in range(atoms_initial_index, atoms_final_index):
+            line2 = text[index].split()
+
             if len(line2) > 6:
+                print line2
                 atom = Atom()
                 atom.index  = line2[0]
-                atom.symbol = None       # C   - carbon
-                atom.name   = line2[1]   #None  # CA  - carbon alpha
-                atom._type  = line2[5]       # C.3 - tertiary carbon 
-                atom.charge = line2[-1]       # partial charge  -> used in force fields
+                atom.symbol = self.get_symbol_from_atom_name (name = line2[1])    # C   - carbon
+                atom.name   = line2[1]                                            #None  # CA  - carbon alpha
+                atom._type  = line2[5]                                            # C.3 - tertiary carbon 
+                atom.charge = line2[-1]                                           # partial charge  -> used in force fields
                 atom.coords = [float(line2[2]),
                                float(line2[3]),
                                float(line2[4])]
+                
                 self.atoms.append(atom)
                 total_charge += float(atom.charge)
-            if len(line2) == 4:
-                try:
-                    bond = [int(line2[0]),int(line2[1]),int(line2[2]),int(line2[3])]
-                    self.bonds.append(bond)
-                except:
-                    pass
-                #print line2
-        if log:
-            self.print_status()
-            #print 'number of atoms:', len(self.atoms)
-            #print 'total charge   :', total_charge
+
+            
+        for index in range(atoms_final_index, bonds_final_index):
+            #print text[index]
+            line2 = text[index]
+            try:
+                bond = [int(line2[0]),int(line2[1]),int(line2[2]),int(line2[3])]
+                self.bonds.append(bond)
+            except:
+                pass
+            
+            
+            
+        #    if len(line2) > 6:
+        #    
+        #    
+        #    
+        #        try:
+        #            
+        #            atom = Atom()
+        #            atom.index  = line2[0]
+        #            atom.symbol = None       # C   - carbon
+        #            atom.name   = line2[1]   #None  # CA  - carbon alpha
+        #            atom._type  = line2[5]       # C.3 - tertiary carbon 
+        #            atom.charge = line2[-1]       # partial charge  -> used in force fields
+        #            atom.coords = [float(line2[2]),
+        #                           float(line2[3]),
+        #                           float(line2[4])]
+        #            self.atoms.append(atom)
+        #            total_charge += float(atom.charge)
+        #        except:
+        #            print line
+        #    
+        #    
+        #    
+        #    
+        #    
+        #    if len(line2) == 4:
+        #        try:
+        #            bond = [int(line2[0]),int(line2[1]),int(line2[2]),int(line2[3])]
+        #            self.bonds.append(bond)
+        #        except:
+        #            pass
+        #        #print line2
+        #if log:
+        #    self.print_status()
+        #    #print 'number of atoms:', len(self.atoms)
+        #    #print 'total charge   :', total_charge
 
     def Export_MOL2File(self                    ,
                         fileout = 'fileout.mol2',
@@ -253,16 +331,6 @@ class MolecularSystem:
         fileout = open(fileout, 'w')
         fileout.write(text)
         print text
-        #for atom in self.atoms:
-        #    print atom.index          
-        #    print atom.symbol         
-        #    print atom.name           
-        #    print atom._type          
-        #    print atom.MULLIKEN_charge
-        #    print atom.CHELPG_charge  
-        #    print atom.LOEWDIN_charge 
-        #    print atom.coordinates    
-        #    print 'bonds:', self.bonds
 
 
     def export_ORCA_inputfile (self                , 
@@ -309,13 +377,12 @@ class MolecularSystem:
         text += '* xyz %3i %3i  \n' %( self.charge , self.multiplicity  )
         
         for atom in self.atoms:
-            text += '%s  %4.6f %4.6f %4.6f \n' %(atom.name, atom.coords[0], atom.coords[1], atom.coords[2] )
+            text += '%s  %4.6f %4.6f %4.6f \n' %(atom.symbol, atom.coords[0], atom.coords[1], atom.coords[2] )
         text += '*                                                                 \n'
         
         fileout = open(fileout, 'w')
         fileout.write(text)
         
-
     
     def ParseORCALogFile (self, filein = None):
         """ Function doc """
@@ -410,6 +477,23 @@ molecules = [
             'examples/metane.mol2'     ,
             'examples/metylamine.mol2' ,
             ]
+molecules = [
+            'Mariana/1_12a.mol2',
+            'Mariana/2_06a.mol2',
+            'Mariana/2_09c.mol2',
+            'Mariana/2_20a.mol2',
+            'Mariana/2_23d.mol2',
+            'Mariana/2_34a.mol2',
+            ]
+
+
+#/home/farminf/Programas/orca_scripts/Mariana/1_12a.mol2
+#/home/farminf/Programas/orca_scripts/Mariana/2_06a.mol2
+#/home/farminf/Programas/orca_scripts/Mariana/2_09c.mol2
+#/home/farminf/Programas/orca_scripts/Mariana/2_20a.mol2
+#/home/farminf/Programas/orca_scripts/Mariana/2_23d.mol2
+#/home/farminf/Programas/orca_scripts/Mariana/2_34a.mol2
+
 
 # simple test
 '''
@@ -423,24 +507,50 @@ for molecule in molecules:
     basename = molecule.split('/')
     basename = basename[-1]
     basename = basename[:-5]
-    
+    print molecule
     mol = MolecularSystem()
     mol.basename = basename
     mol.Import_MOL2FileToSystem (filein = molecule, log = False)
     
+    mol.ORCA_parameters['bases'] =  '6-31G'
+    #
     mol.run_ORCA(_type = 'energy')
-    
+    #
     mol.Export_MOL2File(fileout = molecule[:-4]+'MULLIKEN.mol2', charge ='MULLIKEN')
     mol.Export_MOL2File(fileout = molecule[:-4]+'CHELPG.mol2'  , charge ='CHELPG'  )
     mol.Export_MOL2File(fileout = molecule[:-4]+'LOEWDIN.mol2' , charge ='LOEWDIN' )
     #mol.print_status(partial_charges = True)
+    #
+    #
+    #mol.run_ORCA(_type = 'opt')
+    #mol.Export_MOL2File(fileout = molecule[:-4]+'MULLIKEN_opt.mol2', charge ='MULLIKEN')
+    #mol.Export_MOL2File(fileout = molecule[:-4]+'CHELPG_opt.mol2'  , charge ='CHELPG'  )
+    #mol.Export_MOL2File(fileout = molecule[:-4]+'LOEWDIN_opt.mol2' , charge ='LOEWDIN' )
+
+
+for molecule in molecules:
+    basename = molecule.split('/')
+    basename = basename[-1]
+    basename = basename[:-5]
+    print molecule
+    mol = MolecularSystem()
+    mol.basename = basename
+    mol.Import_MOL2FileToSystem (filein = molecule, log = False)
     
-    
+    mol.ORCA_parameters['bases'] =  '6-31G'
+    #
+    #mol.run_ORCA(_type = 'energy')
+    #
+    #mol.Export_MOL2File(fileout = molecule[:-4]+'MULLIKEN.mol2', charge ='MULLIKEN')
+    #mol.Export_MOL2File(fileout = molecule[:-4]+'CHELPG.mol2'  , charge ='CHELPG'  )
+    #mol.Export_MOL2File(fileout = molecule[:-4]+'LOEWDIN.mol2' , charge ='LOEWDIN' )
+    #mol.print_status(partial_charges = True)
+    #
+    #
     mol.run_ORCA(_type = 'opt')
     mol.Export_MOL2File(fileout = molecule[:-4]+'MULLIKEN_opt.mol2', charge ='MULLIKEN')
     mol.Export_MOL2File(fileout = molecule[:-4]+'CHELPG_opt.mol2'  , charge ='CHELPG'  )
     mol.Export_MOL2File(fileout = molecule[:-4]+'LOEWDIN_opt.mol2' , charge ='LOEWDIN' )
-
 
 
 
