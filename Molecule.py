@@ -49,9 +49,6 @@ class Atom:
 
 class MolecularSystem:
     """ Class doc 
-          1 N           7.0960    3.5310    6.6840 N.3     4  GLY4       -0.1210
-          1 C          -8.5520    1.2889    0.0129 C.3     1  LIG1       -0.0653
-    
     """
     
     def __init__ (self, ORCA_parameters = None):
@@ -60,14 +57,19 @@ class MolecularSystem:
         self.charge       = 0
         self.multiplicity = 1
         self.atoms        = []
-
+        
+        
+        
+        self.number_of_H   = None
+        self.number_of_unk = None
+        
 
         #--------------------------------------------------------------
         #                O R C A    P A R A M E T E R S
         #--------------------------------------------------------------
         if ORCA_parameters == None:
             self.ORCA_parameters = {
-                                    'PAL'        : True   ,
+                                    'PAL'        : False   ,
                                     'NPAL'       : 1      ,
                                     'PrintBasis' : False  ,
                                     'bases'      : '3-21G', 
@@ -281,8 +283,14 @@ class MolecularSystem:
         text += '# ----------------------------------------------------------------\n'
         
         
+        if self.ORCA_parameters['PAL']:
+            NPAL = self.ORCA_parameters['NPAL']
+        else:
+            NPAL = self.ORCA_parameters['NPAL']
+
+        
         if _type == 'energy':
-            text += '! ' + self.ORCA_parameters['method'] + '\n'
+            text += '! '     + self.ORCA_parameters['method'] + '\n'
         
         if _type == 'opt':
             text += '! opt ' + self.ORCA_parameters['method'] + '\n'

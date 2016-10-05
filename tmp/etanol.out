@@ -301,16 +301,16 @@ Time for diagonalization                   ...    0.000 sec
 Threshold for overlap eigenvalues          ... 1.000e-08
 Number of eigenvalues below threshold      ... 0
 Time for construction of square roots      ...    0.000 sec
-Total time needed                          ...    0.001 sec
+Total time needed                          ...    0.000 sec
 
 ---------------------
 INITIAL GUESS: MOREAD
 ---------------------
 Guess MOs are being read from file: tmp/etanol.ges
-Input Geometry matches current geometry (good)
+Input geometry compatible with but different from current geometry
 Input basis set matches current basis set (good)
 MOs were renormalized
-MOs were reorthogonalized (Cholesky)
+MOs were reorthogonalized (Schmidt)
                       ------------------
                       INITIAL GUESS DONE (   0.0 sec)
                       ------------------
@@ -345,25 +345,33 @@ Average number of large basis fcns per batch ...    30.24 (88.97%)
 Maximum spatial batch extension              ...  20.42, 18.69, 21.39 au
 Average spatial batch extension              ...   4.52,  4.02,  4.28 au
 
-Time for grid setup =    0.065 sec
+Time for grid setup =    0.067 sec
 
 --------------
 SCF ITERATIONS
 --------------
 ITER       Energy         Delta-E        Max-DP      RMS-DP      [F,P]     Damp
                ***  Starting incremental Fock matrix formation  ***
+  0   -154.8825452346   0.000000000000 0.01447194  0.00102354  0.0406144 0.7000
+  1   -154.8846307458  -0.002085511236 0.01312324  0.00098485  0.0316346 0.7000
+                               ***Turning on DIIS***
+  2   -154.8862479516  -0.001617205749 0.03330993  0.00264212  0.0234754 0.0000
                       *** Initiating the SOSCF procedure ***
+                           *** Shutting down DIIS ***
                       *** Re-Reading the Fockian *** 
                       *** Removing any level shift *** 
 ITER      Energy       Delta-E        Grad      Rot      Max-DP    RMS-DP
-  0   -154.89031955 -154.8903195522  0.000004  0.000004  0.000014  0.000001
+  3   -154.89025985  -0.0040119034  0.001666  0.001666  0.004989  0.000394
                *** Restarting incremental Fock matrix formation ***
+  4   -154.89030705  -0.0000471938  0.000748  0.002316  0.004455  0.000290
+  5   -154.89031443  -0.0000073810  0.000420  0.000819  0.001351  0.000119
+  6   -154.89031942  -0.0000049935  0.000075  0.000285  0.000522  0.000034
                  **** Energy Check signals convergence ****
               ***Rediagonalizing the Fockian in SOSCF/NRSCF***
 
                *****************************************************
                *                     SUCCESS                       *
-               *           SCF CONVERGED AFTER   1 CYCLES          *
+               *           SCF CONVERGED AFTER   7 CYCLES          *
                *****************************************************
 
 Setting up the final grid:
@@ -397,46 +405,46 @@ Average spatial batch extension              ...   2.83,  2.72,  2.80 au
 
 Final grid set up in    0.3 sec
 Final integration                            ... done (   0.2 sec)
-Change in XC energy                          ...    -0.000448514
-Integrated number of electrons               ...    26.000037517
-Previous integrated no of electrons          ...    25.997215995
+Change in XC energy                          ...    -0.000448511
+Integrated number of electrons               ...    26.000037518
+Previous integrated no of electrons          ...    25.997216017
 
 ----------------
 TOTAL SCF ENERGY
 ----------------
 
-Total Energy       :         -154.89076807 Eh           -4214.79207 eV
+Total Energy       :         -154.89076806 Eh           -4214.79207 eV
 
 Components:
 Nuclear Repulsion  :           81.72495628 Eh            2223.84912 eV
 Electronic Energy  :         -236.61572434 Eh           -6438.64119 eV
 
-One Electron Energy:         -371.51504626 Eh          -10109.43836 eV
-Two Electron Energy:          134.89932192 Eh            3670.79717 eV
+One Electron Energy:         -371.51539348 Eh          -10109.44781 eV
+Two Electron Energy:          134.89966914 Eh            3670.80662 eV
 
 Virial components:
-Potential Energy   :         -309.02371665 Eh           -8408.96283 eV
-Kinetic Energy     :          154.13294859 Eh            4194.17076 eV
-Virial Ratio       :            2.00491666
+Potential Energy   :         -309.02393437 Eh           -8408.96876 eV
+Kinetic Energy     :          154.13316631 Eh            4194.17668 eV
+Virial Ratio       :            2.00491524
 
 
 DFT components:
-N(Alpha)           :       13.000018758733 electrons
-N(Beta)            :       13.000018758733 electrons
-N(Total)           :       26.000037517466 electrons
-E(X)               :      -16.441708871619 Eh       
-E(C)               :       -1.005916345589 Eh       
-E(XC)              :      -17.447625217208 Eh       
+N(Alpha)           :       13.000018759141 electrons
+N(Beta)            :       13.000018759141 electrons
+N(Total)           :       26.000037518283 electrons
+E(X)               :      -16.441732714098 Eh       
+E(C)               :       -1.005917442483 Eh       
+E(XC)              :      -17.447650156581 Eh       
 
 ---------------
 SCF CONVERGENCE
 ---------------
 
-  Last Energy change         ...   -1.4285e-10  Tolerance :   1.0000e-06
-  Last MAX-Density change    ...    1.2735e-05  Tolerance :   1.0000e-05
-  Last RMS-Density change    ...    1.1391e-06  Tolerance :   1.0000e-06
-  Last Orbital Gradient      ...    3.1257e-06  Tolerance :   5.0000e-05
-  Last Orbital Rotation      ...    4.7193e-06  Tolerance :   5.0000e-05
+  Last Energy change         ...   -1.2629e-07  Tolerance :   1.0000e-06
+  Last MAX-Density change    ...    4.0198e-05  Tolerance :   1.0000e-05
+  Last RMS-Density change    ...    4.3669e-06  Tolerance :   1.0000e-06
+  Last Orbital Gradient      ...    1.2911e-05  Tolerance :   5.0000e-05
+  Last Orbital Rotation      ...    1.6742e-05  Tolerance :   5.0000e-05
 
              **** THE GBW FILE WAS UPDATED (tmp/etanol.gbw) ****
              **** DENSITY FILE WAS UPDATED (tmp/etanol.scfp.tmp) ****
@@ -446,45 +454,45 @@ ORBITAL ENERGIES
 ----------------
 
   NO   OCC          E(Eh)            E(eV) 
-   0   2.0000     -19.133622      -520.6523 
-   1   2.0000     -10.225130      -278.2399 
-   2   2.0000     -10.171351      -276.7765 
-   3   2.0000      -1.026151       -27.9230 
-   4   2.0000      -0.742256       -20.1978 
-   5   2.0000      -0.616225       -16.7683 
-   6   2.0000      -0.504032       -13.7154 
-   7   2.0000      -0.451318       -12.2810 
-   8   2.0000      -0.419670       -11.4198 
-   9   2.0000      -0.378828       -10.3084 
-  10   2.0000      -0.364844        -9.9279 
-  11   2.0000      -0.309390        -8.4189 
-  12   2.0000      -0.258208        -7.0262 
-  13   0.0000       0.064171         1.7462 
-  14   0.0000       0.118837         3.2337 
-  15   0.0000       0.145634         3.9629 
-  16   0.0000       0.153907         4.1880 
-  17   0.0000       0.166406         4.5281 
-  18   0.0000       0.187668         5.1067 
-  19   0.0000       0.233400         6.3511 
-  20   0.0000       0.242648         6.6028 
-  21   0.0000       0.554248        15.0818 
-  22   0.0000       0.579967        15.7817 
-  23   0.0000       0.586218        15.9518 
-  24   0.0000       0.612688        16.6721 
-  25   0.0000       0.668720        18.1968 
-  26   0.0000       0.699148        19.0248 
-  27   0.0000       0.826064        22.4784 
-  28   0.0000       0.869821        23.6690 
-  29   0.0000       0.889868        24.2145 
-  30   0.0000       0.923713        25.1355 
-  31   0.0000       0.941176        25.6107 
-  32   0.0000       0.952529        25.9196 
-  33   0.0000       1.032342        28.0915 
-  34   0.0000       1.066472        29.0202 
-  35   0.0000       1.080370        29.3984 
-  36   0.0000       1.209463        32.9112 
-  37   0.0000       1.481790        40.3216 
-  38   0.0000       1.788133        48.6576 
+   0   2.0000     -19.133575      -520.6510 
+   1   2.0000     -10.225085      -278.2387 
+   2   2.0000     -10.171368      -276.7770 
+   3   2.0000      -1.026128       -27.9224 
+   4   2.0000      -0.742251       -20.1977 
+   5   2.0000      -0.616217       -16.7681 
+   6   2.0000      -0.504018       -13.7150 
+   7   2.0000      -0.451308       -12.2807 
+   8   2.0000      -0.419662       -11.4196 
+   9   2.0000      -0.378825       -10.3084 
+  10   2.0000      -0.364840        -9.9278 
+  11   2.0000      -0.309375        -8.4185 
+  12   2.0000      -0.258190        -7.0257 
+  13   0.0000       0.064175         1.7463 
+  14   0.0000       0.118840         3.2338 
+  15   0.0000       0.145637         3.9630 
+  16   0.0000       0.153911         4.1881 
+  17   0.0000       0.166405         4.5281 
+  18   0.0000       0.187670         5.1068 
+  19   0.0000       0.233413         6.3515 
+  20   0.0000       0.242654         6.6030 
+  21   0.0000       0.554254        15.0820 
+  22   0.0000       0.579969        15.7818 
+  23   0.0000       0.586228        15.9521 
+  24   0.0000       0.612691        16.6722 
+  25   0.0000       0.668727        18.1970 
+  26   0.0000       0.699156        19.0250 
+  27   0.0000       0.826071        22.4785 
+  28   0.0000       0.869827        23.6692 
+  29   0.0000       0.889877        24.2148 
+  30   0.0000       0.923711        25.1354 
+  31   0.0000       0.941175        25.6107 
+  32   0.0000       0.952532        25.9197 
+  33   0.0000       1.032349        28.0917 
+  34   0.0000       1.066483        29.0205 
+  35   0.0000       1.080382        29.3987 
+  36   0.0000       1.209473        32.9114 
+  37   0.0000       1.481795        40.3217 
+  38   0.0000       1.788148        48.6580 
 
                     ********************************
                     * MULLIKEN POPULATION ANALYSIS *
@@ -493,37 +501,37 @@ ORBITAL ENERGIES
 -----------------------
 MULLIKEN ATOMIC CHARGES
 -----------------------
-   0 C :   -0.027200
-   1 C :   -0.395078
-   2 O :   -0.587241
-   3 H :    0.112685
-   4 H :    0.148255
-   5 H :    0.351946
-   6 H :    0.119324
-   7 H :    0.151882
+   0 C :   -0.027267
+   1 C :   -0.395029
+   2 O :   -0.587270
+   3 H :    0.112712
+   4 H :    0.148273
+   5 H :    0.351969
+   6 H :    0.119323
+   7 H :    0.151863
    8 H :    0.125426
-Sum of atomic charges:   -0.0000000
+Sum of atomic charges:    0.0000000
 
 --------------------------------
 MULLIKEN REDUCED ORBITAL CHARGES
 --------------------------------
-  0 C s       :     3.253173  s :     3.253173
-      pz      :     0.867255  p :     2.774027
-      px      :     0.941042
-      py      :     0.965730
-  1 C s       :     3.327700  s :     3.327700
-      pz      :     1.074047  p :     3.067379
-      px      :     0.942731
-      py      :     1.050600
-  2 O s       :     3.913941  s :     3.913941
-      pz      :     1.596418  p :     4.673300
-      px      :     1.869611
-      py      :     1.207271
-  3 H s       :     0.887315  s :     0.887315
-  4 H s       :     0.851745  s :     0.851745
-  5 H s       :     0.648054  s :     0.648054
-  6 H s       :     0.880676  s :     0.880676
-  7 H s       :     0.848118  s :     0.848118
+  0 C s       :     3.253191  s :     3.253191
+      pz      :     0.867280  p :     2.774075
+      px      :     0.941063
+      py      :     0.965733
+  1 C s       :     3.327687  s :     3.327687
+      pz      :     1.074031  p :     3.067342
+      px      :     0.942707
+      py      :     1.050603
+  2 O s       :     3.913944  s :     3.913944
+      pz      :     1.596430  p :     4.673326
+      px      :     1.869602
+      py      :     1.207294
+  3 H s       :     0.887288  s :     0.887288
+  4 H s       :     0.851727  s :     0.851727
+  5 H s       :     0.648031  s :     0.648031
+  6 H s       :     0.880677  s :     0.880677
+  7 H s       :     0.848137  s :     0.848137
   8 H s       :     0.874574  s :     0.874574
 
 
@@ -534,36 +542,36 @@ MULLIKEN REDUCED ORBITAL CHARGES
 ----------------------
 LOEWDIN ATOMIC CHARGES
 ----------------------
-   0 C :   -0.039108
-   1 C :   -0.335989
-   2 O :   -0.412537
-   3 H :    0.078113
-   4 H :    0.104960
-   5 H :    0.279136
+   0 C :   -0.039159
+   1 C :   -0.335955
+   2 O :   -0.412558
+   3 H :    0.078134
+   4 H :    0.104973
+   5 H :    0.279154
    6 H :    0.100044
-   7 H :    0.117085
+   7 H :    0.117072
    8 H :    0.108295
 
 -------------------------------
 LOEWDIN REDUCED ORBITAL CHARGES
 -------------------------------
-  0 C s       :     2.962639  s :     2.962639
-      pz      :     0.983805  p :     3.076469
-      px      :     1.059333
-      py      :     1.033331
-  1 C s       :     3.011579  s :     3.011579
-      pz      :     1.130788  p :     3.324410
-      px      :     1.073591
+  0 C s       :     2.962651  s :     2.962651
+      pz      :     0.983821  p :     3.076508
+      px      :     1.059351
+      py      :     1.033335
+  1 C s       :     3.011572  s :     3.011572
+      pz      :     1.130779  p :     3.324383
+      px      :     1.073572
       py      :     1.120032
-  2 O s       :     3.610541  s :     3.610541
-      pz      :     1.652681  p :     4.801995
-      px      :     1.879149
-      py      :     1.270166
-  3 H s       :     0.921887  s :     0.921887
-  4 H s       :     0.895040  s :     0.895040
-  5 H s       :     0.720864  s :     0.720864
+  2 O s       :     3.610543  s :     3.610543
+      pz      :     1.652690  p :     4.802015
+      px      :     1.879141
+      py      :     1.270184
+  3 H s       :     0.921866  s :     0.921866
+  4 H s       :     0.895027  s :     0.895027
+  5 H s       :     0.720846  s :     0.720846
   6 H s       :     0.899956  s :     0.899956
-  7 H s       :     0.882915  s :     0.882915
+  7 H s       :     0.882928  s :     0.882928
   8 H s       :     0.891705  s :     0.891705
 
 
@@ -579,12 +587,12 @@ LOEWDIN REDUCED ORBITAL CHARGES
   FA   - Mayer's free valence
 
   ATOM       NA         ZA         QA         VA         BVA        FA
-  0 C      6.0272     6.0000    -0.0272     3.6977     3.6977     0.0000
-  1 C      6.3951     6.0000    -0.3951     3.7660     3.7660    -0.0000
-  2 O      8.5872     8.0000    -0.5872     1.7315     1.7315     0.0000
-  3 H      0.8873     1.0000     0.1127     0.9294     0.9294     0.0000
-  4 H      0.8517     1.0000     0.1483     0.9308     0.9308    -0.0000
-  5 H      0.6481     1.0000     0.3519     0.8370     0.8370    -0.0000
+  0 C      6.0273     6.0000    -0.0273     3.6977     3.6977     0.0000
+  1 C      6.3950     6.0000    -0.3950     3.7660     3.7660     0.0000
+  2 O      8.5873     8.0000    -0.5873     1.7315     1.7315    -0.0000
+  3 H      0.8873     1.0000     0.1127     0.9294     0.9294    -0.0000
+  4 H      0.8517     1.0000     0.1483     0.9308     0.9308     0.0000
+  5 H      0.6480     1.0000     0.3520     0.8370     0.8370     0.0000
   6 H      0.8807     1.0000     0.1193     0.9456     0.9456    -0.0000
   7 H      0.8481     1.0000     0.1519     0.9391     0.9391    -0.0000
   8 H      0.8746     1.0000     0.1254     0.9422     0.9422     0.0000
@@ -598,30 +606,30 @@ B(  1-C ,  8-H ) :   0.9416 B(  2-O ,  5-H ) :   0.8140
 TIMINGS
 -------
 
-Total SCF time: 0 days 0 hours 0 min 1 sec 
+Total SCF time: 0 days 0 hours 0 min 2 sec 
 
-Total time                  ....       1.034 sec
-Sum of individual times     ....       1.032 sec  ( 99.8%)
+Total time                  ....       2.357 sec
+Sum of individual times     ....       2.354 sec  ( 99.9%)
 
-Fock matrix formation       ....       0.648 sec  ( 62.7%)
-  Coulomb formation         ....       0.298 sec  ( 46.0% of F)
-  XC integration            ....       0.350 sec  ( 54.0% of F)
-    Basis function eval.    ....       0.233 sec  ( 66.6% of XC)
-    Density eval.           ....       0.030 sec  (  8.4% of XC)
-    XC-Functional eval.     ....       0.047 sec  ( 13.4% of XC)
-    XC-Potential eval.      ....       0.034 sec  (  9.7% of XC)
-Diagonalization             ....       0.000 sec  (  0.0%)
+Fock matrix formation       ....       1.956 sec  ( 83.0%)
+  Coulomb formation         ....       1.225 sec  ( 62.6% of F)
+  XC integration            ....       0.730 sec  ( 37.3% of F)
+    Basis function eval.    ....       0.485 sec  ( 66.5% of XC)
+    Density eval.           ....       0.062 sec  (  8.5% of XC)
+    XC-Functional eval.     ....       0.098 sec  ( 13.4% of XC)
+    XC-Potential eval.      ....       0.069 sec  (  9.5% of XC)
+Diagonalization             ....       0.001 sec  (  0.1%)
 Density matrix formation    ....       0.000 sec  (  0.0%)
-Population analysis         ....       0.000 sec  (  0.0%)
+Population analysis         ....       0.001 sec  (  0.0%)
 Initial guess               ....       0.000 sec  (  0.0%)
 Orbital Transformation      ....       0.000 sec  (  0.0%)
 Orbital Orthonormalization  ....       0.000 sec  (  0.0%)
 DIIS solution               ....       0.000 sec  (  0.0%)
-SOSCF solution              ....       0.001 sec  (  0.1%)
-Grid generation             ....       0.382 sec  ( 36.9%)
+SOSCF solution              ....       0.001 sec  (  0.0%)
+Grid generation             ....       0.394 sec  ( 16.7%)
 
 -------------------------   --------------------
-FINAL SINGLE POINT ENERGY      -154.890768066329
+FINAL SINGLE POINT ENERGY      -154.890768060735
 -------------------------   --------------------
 
 
@@ -649,13 +657,13 @@ Electron density file                           ... tmp/etanol.scfp.tmp
 DIPOLE MOMENT
 -------------
                                 X             Y             Z
-Electronic contribution:     -2.05956      -1.15963       1.41234
+Electronic contribution:     -2.05955      -1.15967       1.41224
 Nuclear contribution   :      2.38482       0.94459      -2.07042
                         -----------------------------------------
-Total Dipole Moment    :      0.32526      -0.21504      -0.65807
+Total Dipole Moment    :      0.32527      -0.21508      -0.65818
                         -----------------------------------------
-Magnitude (a.u.)       :      0.76492
-Magnitude (Debye)      :      1.94427
+Magnitude (a.u.)       :      0.76503
+Magnitude (Debye)      :      1.94455
 
 ------------------------------------------------------------------------------
                       ORCA CHELPG CHARGES GENERATION
@@ -680,15 +688,15 @@ Final number of points             ...         7586
 
 CHELPG Charges            
 --------------------------------
-  0   C   :       0.480730
-  1   C   :      -0.358881
-  2   O   :      -0.748499
-  3   H   :      -0.061988
-  4   H   :       0.000343
-  5   H   :       0.437001
-  6   H   :       0.081323
-  7   H   :       0.110692
-  8   H   :       0.059280
+  0   C   :       0.480638
+  1   C   :      -0.358850
+  2   O   :      -0.748520
+  3   H   :      -0.061949
+  4   H   :       0.000367
+  5   H   :       0.437028
+  6   H   :       0.081324
+  7   H   :       0.110676
+  8   H   :       0.059285
 --------------------------------
 Total charge:    -0.000000
 --------------------------------
@@ -697,16 +705,16 @@ CHELPG charges calculated...
 
 Timings for individual parts in CHELPG calculation:
 Grid generation                 ...        0.001 sec (=   0.000 min)
-Potential calculation           ...        0.435 sec (=   0.007 min)
+Potential calculation           ...        0.463 sec (=   0.008 min)
 Fit to the potential            ...        0.003 sec (=   0.000 min)
 ------------------------------------------------------------------------------
 
 
 Timings for individual modules:
 
-Sum of individual times         ...        1.618 sec (=   0.027 min)
-GTO integral calculation        ...        0.122 sec (=   0.002 min)   7.5 %
-SCF iterations                  ...        1.043 sec (=   0.017 min)  64.4 %
-CHELPG charge generation        ...        0.454 sec (=   0.008 min)  28.1 %
+Sum of individual times         ...        2.974 sec (=   0.050 min)
+GTO integral calculation        ...        0.123 sec (=   0.002 min)   4.2 %
+SCF iterations                  ...        2.366 sec (=   0.039 min)  79.6 %
+CHELPG charge generation        ...        0.485 sec (=   0.008 min)  16.3 %
                              ****ORCA TERMINATED NORMALLY****
-TOTAL RUN TIME: 0 days 0 hours 0 minutes 1 seconds 698 msec
+TOTAL RUN TIME: 0 days 0 hours 0 minutes 3 seconds 59 msec

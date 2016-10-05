@@ -94,7 +94,7 @@ for molecule in molecules:
     mol.ORCA_parameters['bases'] =  '6-31G'
 
     mol.run_ORCA(_type = 'opt')
-    mol.Export_MOL2File(fileout = molecule[:-4]+method+'MULLIKEN_opt.mol2', charge ='MULLIKEN')
-    mol.Export_MOL2File(fileout = molecule[:-4]+method+'CHELPG_opt.mol2'  , charge ='CHELPG'  )
-    mol.Export_MOL2File(fileout = molecule[:-4]+method+'LOEWDIN_opt.mol2' , charge ='LOEWDIN' )
+    mol.Export_MOL2File(fileout = molecule[:-4]+method+'_MULLIKEN_opt.mol2', charge ='MULLIKEN')
+    mol.Export_MOL2File(fileout = molecule[:-4]+method+'_CHELPG_opt.mol2'  , charge ='CHELPG'  )
+    mol.Export_MOL2File(fileout = molecule[:-4]+method+'_LOEWDIN_opt.mol2' , charge ='LOEWDIN' )
 
