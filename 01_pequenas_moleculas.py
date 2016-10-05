@@ -70,13 +70,13 @@ for molecule in molecules:
     #mol.multiplicity = 1
     #mol.charge       = 0
     #---------------------------------------------------------------------------
-    
+    method = mol.ORCA_parameters['method']
     
     #       EXPORTANTO OS ARQUIVOS MOL2 COM AS CARGAS DESEJADAS
     #---------------------------------------------------------------------------
-    mol.Export_MOL2File(fileout = molecule[:-4]+'B3LYP_MULLIKEN.mol2', charge ='MULLIKEN')
-    mol.Export_MOL2File(fileout = molecule[:-4]+'B3LYP_CHELPG.mol2'  , charge ='CHELPG'  )
-    mol.Export_MOL2File(fileout = molecule[:-4]+'B3LYP_LOEWDIN.mol2' , charge ='LOEWDIN' )
+    mol.Export_MOL2File(fileout = molecule[:-4]+method+'_MULLIKEN.mol2', charge ='MULLIKEN')
+    mol.Export_MOL2File(fileout = molecule[:-4]+method+'_CHELPG.mol2'  , charge ='CHELPG'  )
+    mol.Export_MOL2File(fileout = molecule[:-4]+method+'_LOEWDIN.mol2' , charge ='LOEWDIN' )
     #---------------------------------------------------------------------------
 
 
@@ -94,7 +94,7 @@ for molecule in molecules:
     mol.ORCA_parameters['bases'] =  '6-31G'
 
     mol.run_ORCA(_type = 'opt')
-    mol.Export_MOL2File(fileout = molecule[:-4]+'MULLIKEN_opt.mol2', charge ='MULLIKEN')
-    mol.Export_MOL2File(fileout = molecule[:-4]+'CHELPG_opt.mol2'  , charge ='CHELPG'  )
-    mol.Export_MOL2File(fileout = molecule[:-4]+'LOEWDIN_opt.mol2' , charge ='LOEWDIN' )
+    mol.Export_MOL2File(fileout = molecule[:-4]+method+'MULLIKEN_opt.mol2', charge ='MULLIKEN')
+    mol.Export_MOL2File(fileout = molecule[:-4]+method+'CHELPG_opt.mol2'  , charge ='CHELPG'  )
+    mol.Export_MOL2File(fileout = molecule[:-4]+method+'LOEWDIN_opt.mol2' , charge ='LOEWDIN' )
 
