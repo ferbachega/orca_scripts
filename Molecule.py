@@ -34,14 +34,16 @@ class Atom:
     
     def __init__ (self):
         """ Class initialiser """
-        self.index           = 0
-        self.symbol          = 0  # C   - carbon
-        self.name            = 0  # CA  - carbon alpha
-        self._type           = 0  # C.3 - tertiary carbon 
-        self.MULLIKEN_charge = 0  # partial charge  -> used in force fields
-        self.CHELPG_charge   = 0
-        self.LOEWDIN_charge  = 0
-        self.coordinates     = [0.0, 0.0, 0.0]
+        self.index            = 0
+        self.symbol           = 0  # C   - carbon
+        self.name             = 0  # CA  - carbon alpha
+        self._type            = 0  # C.3 - tertiary carbon 
+        self.MULLIKEN_charge  = 0  # partial charge  -> used in force fields
+        self.CHELPG_charge    = 0
+        self.LOEWDIN_charge   = 0
+        self.ORIGINAL_charge  = 0
+
+        self.coordinates      = [0.0, 0.0, 0.0]
         pass
 
 
@@ -201,24 +203,25 @@ class MolecularSystem:
             if len(line2) > 6:
                 print line2
                 atom = Atom()
-                atom.index  = line2[0]
-                atom.symbol = self.get_symbol_from_atom_name (name = line2[1])    # C   - carbon
-                atom.name   = line2[1]                                            #None  # CA  - carbon alpha
-                atom._type  = line2[5]                                            # C.3 - tertiary carbon 
-                atom.charge = line2[-1]                                           # partial charge  -> used in force fields
-                atom.coords = [float(line2[2]),
-                               float(line2[3]),
-                               float(line2[4])]
-                
+                atom.index           = line2[0]
+                atom.symbol          = self.get_symbol_from_atom_name (name = line2[1])    # C   - carbon
+                atom.name            = line2[1]                                            #None  # CA  - carbon alpha
+                atom._type           = line2[5]                                            # C.3 - tertiary carbon 
+                atom.ORIGINAL_charge = line2[-1]                                           # partial charge  -> used in force fields
+                atom.coords          = [float(line2[2]),
+                                        float(line2[3]),
+                                        float(line2[4])]
+                print atom.ORIGINAL_charge
                 self.atoms.append(atom)
-                total_charge += float(atom.charge)
+                total_charge += float(atom.ORIGINAL_charge)
 
             
         for index in range(atoms_final_index, bonds_final_index):
             #print text[index]
-            line2 = text[index]
+            line  = text[index]
+            line2 = line.split()
             try:
-                bond = [int(line2[0]),int(line2[1]),int(line2[2]),int(line2[3])]
+                bond = [int(line2[0]),line2[1],line2[2],line2[3]]
                 self.bonds.append(bond)
             except:
                 pass
@@ -263,7 +266,9 @@ class MolecularSystem:
 
     def Export_MOL2File(self                    ,
                         fileout = 'fileout.mol2',
-                        charge  = 'CHELPG'      ,):
+                        resn    = 'UNK'         ,
+                        charge  = 'ORIGINAL'    ,
+                        ):
         """ Function doc 
 
 
@@ -283,9 +288,7 @@ class MolecularSystem:
              1     1     2    1
              2     1     3    1
              3     1     4    1
-             4     1     5    1
-        
-        
+             4     1     5    1      
         """
         
          
@@ -306,15 +309,17 @@ class MolecularSystem:
                 atom_charge = atom.MULLIKEN_charge
             if charge == 'LOEWDIN':
                 atom_charge = atom.LOEWDIN_charge 
-
+            if charge == 'ORIGINAL':
+                atom_charge = atom.ORIGINAL_charge 
             #print atom.coordinates
-            text += '%7i %3s       %7.4f %7.4f %7.4f %3s  1  LIG  %8.4f \n' %(int(atom.index), 
-                                                                              str(atom.name), 
-                                                                              float(atom.coords[0]),
-                                                                              float(atom.coords[1]),
-                                                                              float(atom.coords[2]),
-                                                                              str(atom._type), 
-                                                                              float(atom_charge))
+            text += '%7i %3s       %7.4f %7.4f %7.4f %4s 1  %3s  %8.4f \n' %(int(atom.index), 
+                                                                             str(atom.name), 
+                                                                             float(atom.coords[0]),
+                                                                             float(atom.coords[1]),
+                                                                             float(atom.coords[2]),
+                                                                             str(atom._type)      , 
+                                                                             str(resn[0:3])       ,
+                                                                             float(atom_charge))
         
         
         
@@ -330,7 +335,7 @@ class MolecularSystem:
         
         fileout = open(fileout, 'w')
         fileout.write(text)
-        print text
+        #print text
 
 
     def export_ORCA_inputfile (self                , 
@@ -443,6 +448,7 @@ class MolecularSystem:
                     self.atoms[index].MULLIKEN_charge = float(line2[3])
                     #print self.atoms[index].name , self.atoms[index].MULLIKEN_charge
                 except:
+                    #pass
                     print index, line2
                     
         for line in range(LOEWDIN_initial_index, LOEWDIN_final_index):
@@ -458,9 +464,9 @@ class MolecularSystem:
         #subprocess.call('orca', filein, '>', fileout)
 
         if filein == None:
-            filein = self.basename+'.inp'
+            filein =  'tmp/' + self.basename+'.inp'
         if fileout == None:
-            fileout = self.basename+'.out'
+            fileout = 'tmp/' + self.basename+'.out'
         
         self.export_ORCA_inputfile (fileout = filein,
                                     _type   = _type)
@@ -477,6 +483,7 @@ molecules = [
             'examples/metane.mol2'     ,
             'examples/metylamine.mol2' ,
             ]
+'''
 molecules = [
             'Mariana/1_12a.mol2',
             'Mariana/2_06a.mol2',
@@ -485,14 +492,46 @@ molecules = [
             'Mariana/2_23d.mol2',
             'Mariana/2_34a.mol2',
             ]
+'''
 
-
-#/home/farminf/Programas/orca_scripts/Mariana/1_12a.mol2
-#/home/farminf/Programas/orca_scripts/Mariana/2_06a.mol2
-#/home/farminf/Programas/orca_scripts/Mariana/2_09c.mol2
-#/home/farminf/Programas/orca_scripts/Mariana/2_20a.mol2
-#/home/farminf/Programas/orca_scripts/Mariana/2_23d.mol2
-#/home/farminf/Programas/orca_scripts/Mariana/2_34a.mol2
+#molecules = [
+#            'Mariana/2_34a.MULLIKEN_opt.mol2',
+#            'Mariana/2_34a.LOEWDIN_opt.mol2',
+#            'Mariana/2_34a.CHELPG_opt.mol2',
+#            'Mariana/2_23d.MULLIKEN_opt.mol2',
+#            'Mariana/2_23d.LOEWDIN_opt.mol2',
+#            'Mariana/2_23d.CHELPG_opt.mol2',
+#            'Mariana/2_20a.MULLIKEN_opt.mol2',
+#            'Mariana/2_20a.LOEWDIN_opt.mol2',
+#            'Mariana/2_20a.CHELPG_opt.mol2',
+#            'Mariana/2_09c.MULLIKEN_opt.mol2',
+#            'Mariana/2_09c.LOEWDIN_opt.mol2',
+#            'Mariana/2_09c.CHELPG_opt.mol2',
+#            'Mariana/2_06a.MULLIKEN_opt.mol2',
+#            'Mariana/2_06a.LOEWDIN_opt.mol2',
+#            'Mariana/2_06a.CHELPG_opt.mol2',
+#            'Mariana/1_12a.MULLIKEN_opt.mol2',
+#            'Mariana/1_12a.LOEWDIN_opt.mol2',
+#            'Mariana/1_12a.CHELPG_opt.mol2',
+#            'Mariana/2_34a.MULLIKEN.mol2',
+#            'Mariana/2_34a.LOEWDIN.mol2',
+#            'Mariana/2_34a.CHELPG.mol2',
+#            'Mariana/2_23d.MULLIKEN.mol2',
+#            'Mariana/2_23d.LOEWDIN.mol2',
+#            'Mariana/2_23d.CHELPG.mol2',
+#            'Mariana/2_20a.MULLIKEN.mol2',
+#            'Mariana/2_20a.LOEWDIN.mol2',
+#            'Mariana/2_20a.CHELPG.mol2',
+#            'Mariana/2_09c.MULLIKEN.mol2',
+#            'Mariana/2_09c.LOEWDIN.mol2',
+#            'Mariana/2_09c.CHELPG.mol2',
+#            'Mariana/2_06a.MULLIKEN.mol2',
+#            'Mariana/2_06a.LOEWDIN.mol2',
+#            'Mariana/2_06a.CHELPG.mol2',
+#            'Mariana/1_12a.MULLIKEN.mol2',
+#            'Mariana/1_12a.LOEWDIN.mol2',
+#            'Mariana/1_12a.CHELPG.mol2',
+#            ]
 
 
 # simple test
@@ -503,6 +542,18 @@ mol.run_ORCA()
 mol.print_status(partial_charges = True)
 '''
 
+#for molecule in molecules:
+#    basename = molecule.split('/')
+#    basename = basename[-1]
+#    basename = basename[:-5]
+#    print molecule
+#    mol = MolecularSystem()
+#    mol.basename = basename
+#    mol.Import_MOL2FileToSystem (filein = molecule, log = False)
+#    
+#    mol.Export_MOL2File(fileout = molecule[:-5]+'_Bonds.mol2', charge ='ORIGINAL')
+
+
 for molecule in molecules:
     basename = molecule.split('/')
     basename = basename[-1]
@@ -512,13 +563,14 @@ for molecule in molecules:
     mol.basename = basename
     mol.Import_MOL2FileToSystem (filein = molecule, log = False)
     
+    mol.ORCA_parameters['method'] =  'B3LYP'
     mol.ORCA_parameters['bases'] =  '6-31G'
     #
     mol.run_ORCA(_type = 'energy')
     #
-    mol.Export_MOL2File(fileout = molecule[:-4]+'MULLIKEN.mol2', charge ='MULLIKEN')
-    mol.Export_MOL2File(fileout = molecule[:-4]+'CHELPG.mol2'  , charge ='CHELPG'  )
-    mol.Export_MOL2File(fileout = molecule[:-4]+'LOEWDIN.mol2' , charge ='LOEWDIN' )
+    mol.Export_MOL2File(fileout = molecule[:-4]+'B3LYP_MULLIKEN.mol2', charge ='MULLIKEN')
+    mol.Export_MOL2File(fileout = molecule[:-4]+'B3LYP_CHELPG.mol2'  , charge ='CHELPG'  )
+    mol.Export_MOL2File(fileout = molecule[:-4]+'B3LYP_LOEWDIN.mol2' , charge ='LOEWDIN' )
     #mol.print_status(partial_charges = True)
     #
     #
@@ -528,6 +580,7 @@ for molecule in molecules:
     #mol.Export_MOL2File(fileout = molecule[:-4]+'LOEWDIN_opt.mol2' , charge ='LOEWDIN' )
 
 
+'''
 for molecule in molecules:
     basename = molecule.split('/')
     basename = basename[-1]
@@ -551,7 +604,7 @@ for molecule in molecules:
     mol.Export_MOL2File(fileout = molecule[:-4]+'MULLIKEN_opt.mol2', charge ='MULLIKEN')
     mol.Export_MOL2File(fileout = molecule[:-4]+'CHELPG_opt.mol2'  , charge ='CHELPG'  )
     mol.Export_MOL2File(fileout = molecule[:-4]+'LOEWDIN_opt.mol2' , charge ='LOEWDIN' )
-
+'''
 
 
 
