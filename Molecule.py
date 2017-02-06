@@ -43,7 +43,6 @@ class Atom:
         self.LOEWDIN_charge   = 0
         self.ORIGINAL_charge  = 0
 
-        self.coordinates      = [0.0, 0.0, 0.0]
         pass
 
 
@@ -171,7 +170,7 @@ class MolecularSystem:
             line2 = text[index].split()
 
             if len(line2) > 6:
-                print line2
+                #rint line2
                 atom = Atom()
                 atom.index           = line2[0]
                 atom.symbol          = self.get_symbol_from_atom_name (name = line2[1])    # C   - carbon
@@ -181,12 +180,12 @@ class MolecularSystem:
                 atom.coords          = [float(line2[2]),
                                         float(line2[3]),
                                         float(line2[4])]
-                print atom.ORIGINAL_charge
+                #print atom.ORIGINAL_charge
                 self.atoms.append(atom)
                 total_charge += float(atom.ORIGINAL_charge)
 
             
-        for index in range(atoms_final_index, bonds_final_index):
+        for index in range(atoms_final_index, bonds_final_index+1):
             #print text[index]
             line  = text[index]
             line2 = line.split()
@@ -197,7 +196,7 @@ class MolecularSystem:
                 pass
             
             
-    def Export_MOL2File(self                    ,
+    def export_MOL2File(self                    ,
                         fileout = 'fileout.mol2',
                         resn    = 'UNK'         ,
                         charge  = 'ORIGINAL'    ,
@@ -327,6 +326,39 @@ class MolecularSystem:
         fileout.write(text)
         
     
+    def load_XYZ_coordinates_to_system (self, filein):
+        """ Function doc 
+        
+        [0]         [1]                    [2]                   [3]
+        C   -3.25795487715671      2.00693616727014      0.00008944956500
+
+        """
+        filein =  open(filein , 'r')
+        filein =  filein.readlines()
+        
+        index = 0 
+        for line in filein[2:]:
+            line = line.replace('\n', '')
+            line2 = line.split()
+            if len(line2) ==4:
+                #print [float(line2[1]),
+                #       float(line2[2]),
+                #       float(line2[3])]
+                       
+                #print index , self.atoms[index].coords      
+                
+                self.atoms[index].coords = [float(line2[1]),
+                                                 float(line2[2]),
+                                                 float(line2[3])]
+            
+                #print index, self.atoms[index].coords
+                index += 1
+            #if len(line2) == 4:
+            #    try:
+            #        line2[1] == float(line2[1])
+                
+                
+
     def ParseORCALogFile (self, filein = None):
         """ Function doc """
 
@@ -411,8 +443,11 @@ class MolecularSystem:
         os.system(ORCA + '/orca '+filein+ ' > ' + fileout)
         
         self.ParseORCALogFile(fileout)
-
-
+        if _type == 'opt':
+            try:
+                self.load_XYZ_coordinates_to_system(fileout[:-3]+'xyz')
+            except:
+                print fileout[:-3]+'xyz', 'not found or corrupted'
 
 
 
