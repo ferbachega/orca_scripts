@@ -25,113 +25,82 @@ from Molecule import MolecularSystem
 from pprint import pprint
 import subprocess
 import os
+import sys
 
-method = 'AM1'#'HF'
-basis  = ''   #'3-21G'
-folder = 'data/MOL2_dockG/'
-
-
-molecules = [
-            folder+'/1_01.mol2' ,
-            folder+'/1_05.mol2' ,
-            folder+'/1_09.mol2' ,
-            folder+'/1_12a.mol2',
-            folder+'/1_12b.mol2',
-            folder+'/1_14a.mol2',
-            folder+'/1_14b.mol2',
-            folder+'/2_04a.mol2',
-            folder+'/2_04b.mol2',
-            folder+'/2_04c.mol2',
-            folder+'/2_04d.mol2',
-            folder+'/2_04e.mol2',
-            folder+'/2_06a.mol2',
-            folder+'/2_06b.mol2',
-            folder+'/2_06c.mol2',
-            folder+'/2_09a.mol2',
-            folder+'/2_09b.mol2',
-            folder+'/2_09c.mol2',
-            folder+'/2_09d.mol2',
-            folder+'/2_09e.mol2',
-            folder+'/2_14a.mol2',
-            folder+'/2_14b.mol2',
-            folder+'/2_14c.mol2',
-            folder+'/2_18.mol2' ,
-            folder+'/2_20a.mol2',
-            folder+'/2_20b.mol2',
-            folder+'/2_23a.mol2',
-            folder+'/2_23b.mol2',
-            folder+'/2_23c.mol2',
-            folder+'/2_23d.mol2',
-            folder+'/2_23e.mol2',
-            folder+'/2_23f.mol2',
-            folder+'/2_23g.mol2',
-            folder+'/2_34a.mol2',
-            folder+'/2_34b.mol2',
-            folder+'/2_34c.mol2',
-            folder+'/2_35a.mol2',
-            folder+'/2_35b.mol2',
-            folder+'/2_35c.mol2',
-            ]
-'''
-molecules = [
-            'Mariana/1_12a.mol2',
-            'Mariana/2_06a.mol2',
-            'Mariana/2_09c.mol2',
-            'Mariana/2_20a.mol2',
-            'Mariana/2_23d.mol2',
-            'Mariana/2_34a.mol2',
-            ]
-'''
+inputs     = sys.argv
+method     = 'AM1'#'HF'
+basis      = ''   #'3-21G'
+if os.getcwd() not in inputs[1]:
+	folder 	   = os.getcwd()+'/'+inputs[1]#'data/MOL2_dockG/'
+else:
+	folder 	   = inputs[1]#'data/MOL2_dockG/'
 
 
+molecules_raw = os.listdir(folder) #molecules names
+molecules     = [folder+x for x in molecules_raw] #molecules full path
 
+#---------------------------------------------------------------------------
+#			Dataset information
+#---------------------------------------------------------------------------
+print 'Working directory: %s ' %folder
+print '%s molecules found in the directory' %len(molecules_raw)
+if len(inputs)>=3: print "%s format was selected\n\n" %inputs[2]
+#---------------------------------------------------------------------------
 
-
-#'''
-for molecule in molecules:
-    basename = molecule.split('/')
-    basename = basename[-1]
-    basename = basename[:-5]
-    
-    print molecule
-
-    #       Aqui eh feito o setup do calculo
-    #---------------------------------------------------------------------------
-    mol = MolecularSystem()
-    mol.basename = basename
-    mol.Import_MOL2FileToSystem (filein = molecule, log = False)
-    mol.ORCA_parameters['method'] = method#'AM1'#'B3LYP'
-    mol.ORCA_parameters['bases'] =  basis #''#'3-21G'
-    mol.run_ORCA(_type = 'energy')   # opcoes energy ou opt
-    
-    #mol.multiplicity = 1
-    #mol.charge       = 0
-    #---------------------------------------------------------------------------
-    label = mol.ORCA_parameters['method']+'_'+mol.ORCA_parameters['bases']
-    
-    #       EXPORTANTO OS ARQUIVOS MOL2 COM AS CARGAS DESEJADAS
-    #---------------------------------------------------------------------------
-    mol.export_MOL2File(fileout = molecule[:-4]+label+'_MULLIKEN.mol2', charge ='MULLIKEN')
-    mol.export_MOL2File(fileout = molecule[:-4]+label+'_CHELPG.mol2'  , charge ='CHELPG'  )
-    mol.export_MOL2File(fileout = molecule[:-4]+label+'_LOEWDIN.mol2' , charge ='LOEWDIN' )
-    #---------------------------------------------------------------------------
-#'''
 
 for molecule in molecules:
-    basename = molecule.split('/')
-    basename = basename[-1]
-    basename = basename[:-5]
-    
-    print molecule
-    mol = MolecularSystem()
-    mol.basename = basename
-    mol.Import_MOL2FileToSystem (filein = molecule, log = False)
+	if len(inputs)>=3:
+		mol_format = inputs[2]
+		if mol_format not in molecule:
+			print 'Wrong molecule format for %s' %molecule
+			basename = 'Empty'
+		else:
+			basename = molecule.split('/')[-1].split('.'+mol_format)[0]
+	else:		
+		print 'No molecule format selected. Things can go wrong if theres \n a point in the name of your molecule'
+		basename = molecule.split('/')[-1].split('.')[0]
 
-    mol.ORCA_parameters['method'] = method#'HF'#'B3LYP'
-    mol.ORCA_parameters['bases'] =  basis #'3-21G'
+	print molecule.split('/')[-1]
 
-    mol.run_ORCA(_type = 'opt')
-    mol.export_MOL2File(fileout = molecule[:-4]+label+'_MULLIKEN_opt.mol2', charge ='MULLIKEN')
-    mol.export_MOL2File(fileout = molecule[:-4]+label+'_CHELPG_opt.mol2'  , charge ='CHELPG'  )
-    mol.export_MOL2File(fileout = molecule[:-4]+label+'_LOEWDIN_opt.mol2' , charge ='LOEWDIN' )
+	#       Aqui eh feito o setup do calculo
+	#---------------------------------------------------------------------------
+	mol = MolecularSystem()
+	mol.basename = basename
+	mol.Import_MOL2FileToSystem (filein = molecule, log = False)
+	mol.ORCA_parameters['method'] = method#'AM1'#'B3LYP'
+	mol.ORCA_parameters['bases'] =  basis #''#'3-21G'
+	mol.run_ORCA(_type = 'energy')   # opcoes energy ou opt
 
+	#mol.multiplicity = 1
+	#mol.charge       = 0
+	#---------------------------------------------------------------------------
+	label = mol.ORCA_parameters['method']+'_'+mol.ORCA_parameters['bases']
+
+	#       EXPORTANTO OS ARQUIVOS MOL2 COM AS CARGAS DESEJADAS
+	#---------------------------------------------------------------------------
+	mol.export_MOL2File(fileout = molecule[:-4]+label+'_MULLIKEN.mol2', charge ='MULLIKEN')
+	mol.export_MOL2File(fileout = molecule[:-4]+label+'_CHELPG.mol2'  , charge ='CHELPG'  )
+	mol.export_MOL2File(fileout = molecule[:-4]+label+'_LOEWDIN.mol2' , charge ='LOEWDIN' )
+	#---------------------------------------------------------------------------
+
+
+	mol.run_ORCA(_type = 'opt')
+	mol.export_MOL2File(fileout = molecule[:-4]+label+'_MULLIKEN_opt.mol2', charge ='MULLIKEN')
+	mol.export_MOL2File(fileout = molecule[:-4]+label+'_CHELPG_opt.mol2'  , charge ='CHELPG'  )
+	mol.export_MOL2File(fileout = molecule[:-4]+label+'_LOEWDIN_opt.mol2' , charge ='LOEWDIN' )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#print molecules
