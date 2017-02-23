@@ -25,9 +25,9 @@ from pprint import pprint
 import subprocess
 import os
 
-ORCA = os.environ.get('ORCA')
+#ORCA = os.environ.get('ORCA')
 
-#ORCA='/home/fernando/programs/orca_3_0_3_linux_x86-64'
+ORCA='/usr/local/bin'
 
 class Atom:
     """ Class doc """
@@ -431,11 +431,12 @@ class MolecularSystem:
     def run_ORCA(self, filein = None, fileout = None, _type = 'energy'):
         """ Function doc """
         #subprocess.call('orca', filein, '>', fileout)
-
+        if not os.path.exists('orca_tmp'):
+            os.makedirs('orca_tmp')
         if filein == None:
-            filein =  'tmp/' + self.basename+'.inp'
+            filein =  'orca_tmp/' + self.basename+'.inp'
         if fileout == None:
-            fileout = 'tmp/' + self.basename+'.out'
+            fileout = 'orca_tmp/' + self.basename+'.out'
         
         self.export_ORCA_inputfile (fileout = filein,
                                     _type   = _type)
